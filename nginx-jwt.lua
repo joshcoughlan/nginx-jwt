@@ -52,6 +52,7 @@ function M.auth(claim_specs)
 
     ngx.log(ngx.INFO, "JWT: " .. cjson.encode(jwt_obj))
 
+--[[
     -- optionally require specific claims
     if claim_specs ~= nil then
         --TODO: test
@@ -109,6 +110,7 @@ function M.auth(claim_specs)
             ngx.exit(ngx.HTTP_UNAUTHORIZED)
         end
     end
+]]--
 
     -- write the X-Auth-UserId header
     ngx.header["X-Auth-UserId"] = jwt_obj.payload.sub

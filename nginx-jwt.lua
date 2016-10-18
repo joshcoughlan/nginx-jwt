@@ -36,6 +36,7 @@ function M.auth(claim_specs)
         token = auth_cookie
     elseif auth_header ~= nil and auth_cookie == nil then
         _, _, token = string.find(auth_header, "Bearer%s+(.+)")
+        auth_header = auth_cookie
     end
 
     -- require Bearer token

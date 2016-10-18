@@ -2,6 +2,7 @@ local jwt = require "resty.jwt"
 local cjson = require "cjson"
 local basexx = require "basexx"
 local secret = os.getenv("JWT_SECRET")
+local jwtcookie = os.getenv("JWT_COOKIE")
 
 assert(secret ~= nil, "Environment variable JWT_SECRET not set")
 
@@ -25,10 +26,13 @@ local M = {}
 function M.auth(claim_specs)
     -- require Authorization request header
     local auth_header = ngx.var.http_Authorization
+    local auth_cookie = ngx.var["cookie_" .. jwtcookie]
 
-    if auth_header == nil then
-        ngx.log(ngx.WARN, "No Authorization header")
+    if auth_header == nil and auth_cookie == nil then
+        ngx.log(ngx.WARN, "No Authorization header or cookie")
         ngx.exit(ngx.HTTP_UNAUTHORIZED)
+    elseif auth_header == nil and auth_cookie ~= nil then
+        auth_header = auth_cookie
     end
 
     ngx.log(ngx.INFO, "Authorization: " .. auth_header)
